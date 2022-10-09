@@ -43,7 +43,7 @@
             window.location = "login.html";
         } else {
             console.log(currentUser);
-            header.innerText = "Welcome " + currentUser.fullName;
+            header.innerText = "Welcome " + currentUser.fullName + " you are a " + currentUser.userType;
             btnSignOut.href = "javascript:signOut()";
         }
     }

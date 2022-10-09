@@ -209,9 +209,7 @@
         const password = document.getElementById("inpPassword");
         const btnLogin = document.getElementById("btnLogin");
         const loader = document.getElementById("loader");
-
-        const passwordField = document.querySelector("#password");
-        const eyeIcon = document.querySelector("#eye");
+        const eyeIcon = document.getElementById("eye");
 
         var currentUser = null;
 
@@ -239,7 +237,7 @@
         }
 
         function authenticateUser() {
-            if (validateInputs) {
+            if (validateInputs()) {
                 loader.hidden = false;
                 auth.signInWithEmailAndPassword(email.value, password.value)
                     .then(function () {
@@ -291,8 +289,8 @@
 
         eye.addEventListener("click", function () {
             this.classList.toggle("fa-eye-slash");
-            const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
-            passwordField.setAttribute("type", type);
+            const type = password.getAttribute("type") === "password" ? "text" : "password";
+            password.setAttribute("type", type);
         })
 
         btnLogin.addEventListener("click", authenticateUser);

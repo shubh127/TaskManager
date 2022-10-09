@@ -218,6 +218,8 @@
         const confirmPassword = document.getElementById("inpConfirmPassword");
         const btnSubmit = document.getElementById("btnSignUp");
         const loader = document.getElementById("loader");
+        const eye1 = document.getElementById("eye1");
+        const eye2 = document.getElementById("eye2");
 
         var currentUser = null;
 
@@ -263,12 +265,13 @@
                     .then((userCredential) => {
                         var user = userCredential.user;
                         var databaseRef = database.ref()
-                        var user_data = {
+                        var userData = {
                             email: email.value,
                             fullName: name.value,
-                        }
+                            userType: "member"
+                        };
 
-                        databaseRef.child('users/' + user.uid).set(user_data)
+                        databaseRef.child('users/' + user.uid).set(userData);
                         loader.hidden = true;
                         alert("Account created successfully!!!");
                         window.location = "login.html";
@@ -302,14 +305,14 @@
 
         eye1.addEventListener("click", function () {
             this.classList.toggle("fa-eye-slash");
-            const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
-            passwordField.setAttribute("type", type);
+            const type = password.getAttribute("type") === "password" ? "text" : "password";
+            password.setAttribute("type", type);
         })
 
         eye2.addEventListener("click", function () {
             this.classList.toggle("fa-eye-slash");
-            const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
-            passwordField.setAttribute("type", type);
+            const type = confirmPassword.getAttribute("type") === "password" ? "text" : "password";
+            confirmPassword.setAttribute("type", type);
         })
 
         btnSubmit.addEventListener("click", registerUser);
