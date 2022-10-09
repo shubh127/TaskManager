@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport" content="width= device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
+            margin: 0px;
+        }
+
+        .loading {
+            position: fixed;
+            z-index: 999;
+            height: 2em;
+            width: 2em;
+            overflow: show;
+            margin: auto;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+        }
+
+        .loading:before {
+            content: '';
+            display: block;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(rgba(20, 20, 20, .8), rgba(0, 0, 0, .8));
+
+            background: -webkit-radial-gradient(rgba(20, 20, 20, .8), rgba(0, 0, 0, .8));
+        }
+
+        .loading:not(:required) {
+            font: 0/0 a;
+            color: transparent;
+            text-shadow: none;
+            background-color: transparent;
+            border: 0;
+        }
+
+        .loading:not(:required):after {
+            content: '';
+            display: block;
+            font-size: 10px;
+            width: 1em;
+            height: 1em;
+            margin-top: -0.5em;
+            -webkit-animation: spinner 150ms infinite linear;
+            -moz-animation: spinner 150ms infinite linear;
+            -ms-animation: spinner 150ms infinite linear;
+            -o-animation: spinner 150ms infinite linear;
+            animation: spinner 150ms infinite linear;
+            border-radius: 0.5em;
+            -webkit-box-shadow: rgba(255, 255, 255, 0.75) 1.5em 0 0 0, rgba(255, 255, 255, 0.75) 1.1em 1.1em 0 0, rgba(255, 255, 255, 0.75) 0 1.5em 0 0, rgba(255, 255, 255, 0.75) -1.1em 1.1em 0 0, rgba(255, 255, 255, 0.75) -1.5em 0 0 0, rgba(255, 255, 255, 0.75) -1.1em -1.1em 0 0, rgba(255, 255, 255, 0.75) 0 -1.5em 0 0, rgba(255, 255, 255, 0.75) 1.1em -1.1em 0 0;
+            box-shadow: rgba(255, 255, 255, 0.75) 1.5em 0 0 0, rgba(255, 255, 255, 0.75) 1.1em 1.1em 0 0, rgba(255, 255, 255, 0.75) 0 1.5em 0 0, rgba(255, 255, 255, 0.75) -1.1em 1.1em 0 0, rgba(255, 255, 255, 0.75) -1.5em 0 0 0, rgba(255, 255, 255, 0.75) -1.1em -1.1em 0 0, rgba(255, 255, 255, 0.75) 0 -1.5em 0 0, rgba(255, 255, 255, 0.75) 1.1em -1.1em 0 0;
+        }
+
+        @-webkit-keyframes spinner {
+            0% {
+                -webkit-transform: rotate(0deg);
+                -moz-transform: rotate(0deg);
+                -ms-transform: rotate(0deg);
+                -o-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+
+        @-moz-keyframes spinner {
+            0% {
+                -webkit-transform: rotate(0deg);
+                -moz-transform: rotate(0deg);
+                -ms-transform: rotate(0deg);
+                -o-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+
+        @-o-keyframes spinner {
+            0% {
+                -webkit-transform: rotate(0deg);
+                -moz-transform: rotate(0deg);
+                -ms-transform: rotate(0deg);
+                -o-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spinner {
+            0% {
+                -webkit-transform: rotate(0deg);
+                -moz-transform: rotate(0deg);
+                -ms-transform: rotate(0deg);
+                -o-transform: rotate(0deg);
+                transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(360deg);
+                -moz-transform: rotate(360deg);
+                -ms-transform: rotate(360deg);
+                -o-transform: rotate(360deg);
+                transform: rotate(360deg);
+            }
+        }
+
+        .password-container {
+            width: 400px;
+            position: relative;
+        }
+
+        .password-container input[type="password"],
+        .password-container input[type="text"] {
+            width: 100%;
+            padding: 12px 36px 12px 12px;
+            box-sizing: border-box;
+        }
+
+        .fa-eye {
+            position: absolute;
+            top: 28%;
+            right: 4%;
+            cursor: pointer;
+            color: lightgray;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mb-5">
+        <h3 class="mb-3">Login</h3>
+        <div class="password-container mb-3">
+            <input type="text" placeholder="Email" id="inpEmail">
+        </div>
+
+        <div class="password-container mb-3">
+            <input type="password" placeholder="Password" id="inpPassword">
+            <i class="fa-solid fa-eye" id="eye"></i>
+        </div>
+        <div class="custom-control custom-switch mb-3">
+            <input class="custom-control-input" type="checkbox" id="toggleRemember">
+            <label class="custom-control-label" for="toggleRemember">Remember me</label>
+        </div>
+        <button type="text" id="btnLogin" class="btn btn-outline-primary mb-3 w-100">Login</button>
+        <a href="register.html" class="badge badge-secondary py-1 w-100">Want to create a new account ?</a>
+        <div class="loading" id="loader" hidden>Loading&#8230;</div>
+    </div>
+
+    <script type="module">
+        const firebaseConfig = {
+            apiKey: "AIzaSyCinFXz6dEhbTXUnPz3peosGRBr_SB709I",
+            authDomain: "task-manager-8c255.firebaseapp.com",
+            databaseURL: "https://task-manager-8c255-default-rtdb.firebaseio.com",
+            projectId: "task-manager-8c255",
+            storageBucket: "task-manager-8c255.appspot.com",
+            messagingSenderId: "90700216322",
+            appId: "1:90700216322:web:a4b3087d4f546991ce4f1b"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        const email = document.getElementById("inpEmail");
+        const password = document.getElementById("inpPassword");
+        const btnLogin = document.getElementById("btnLogin");
+        const loader = document.getElementById("loader");
+
+        const passwordField = document.querySelector("#password");
+        const eyeIcon = document.querySelector("#eye");
+
+        var currentUser = null;
+
+        function validateInputs() {
+            let nameregex = /^[a-z A-Z]+$/;
+            let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+            if (isEmptyOrSpaces(email.value) ||
+                isEmptyOrSpaces(password.value)) {
+                alert("You cannot leave any field empty!!!");
+                return false;
+            }
+
+            if (!emailRegex.test(email.value)) {
+                alert("Enter a valid email")
+                return false;
+            }
+
+            if (password.value.length < 6) {
+                alert("Password must be atleast 6 digits long!!!")
+                return false;
+            }
+
+            return true;
+        }
+
+        function authenticateUser() {
+            if (validateInputs) {
+                loader.hidden = false;
+                auth.signInWithEmailAndPassword(email.value, password.value)
+                    .then(function () {
+                        var user = auth.currentUser;
+                        var databaseRef = database.ref();
+                        databaseRef.child('users/' + user.uid).get().then((snapshot) => {
+                            login(snapshot);
+                        });
+
+                    })
+                    .catch(function (error) {
+                        alert("Error-" + error.message);
+                        loader.hidden = true;
+                    })
+            }
+        }
+
+        function login(user) {
+            let keepLoggedIn = document.getElementById("toggleRemember").checked;
+            if (keepLoggedIn) {
+                localStorage.setItem("keepLoggedIn", "yes");
+                localStorage.setItem("user", JSON.stringify(user));
+            } else {
+                sessionStorage.setItem("user", JSON.stringify(user));
+            }
+            loader.hidden = true;
+            window.location = "index.html";
+        }
+
+        function isEmptyOrSpaces(str) {
+            return str === null || str.match(/^ *$/) !== null
+        }
+
+        function getUserName() {
+            let keepLoggedIn = localStorage.getItem("keepLoggedIn");
+            if (keepLoggedIn == "yes") {
+                currentUser = JSON.parse(localStorage.getItem("user"));
+            } else {
+                currentUser = JSON.parse(sessionStorage.getItem("user"));
+            }
+        }
+
+        window.onload = function () {
+            getUserName();
+            if (currentUser != null) {
+                window.location = "index.html";
+            }
+        }
+
+        eye.addEventListener("click", function () {
+            this.classList.toggle("fa-eye-slash");
+            const type = passwordField.getAttribute("type") === "password" ? "text" : "password";
+            passwordField.setAttribute("type", type);
+        })
+
+        btnLogin.addEventListener("click", authenticateUser);
+    </script>
+</body>
+
+</html>
