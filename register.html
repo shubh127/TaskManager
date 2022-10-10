@@ -271,10 +271,15 @@
                             userType: "member"
                         };
 
-                        databaseRef.child('users/' + user.uid).set(userData);
-                        loader.hidden = true;
-                        alert("Account created successfully!!!");
-                        window.location = "login.html";
+                        databaseRef.child('users/' + user.uid).set(userData, (error) => {
+                            loader.hidden = true;
+                            if (error) {
+                                alert("Error-" + error.message);
+                            } else {
+                                alert("Account created successfully!!!");
+                                window.location = "login.html";
+                            }
+                        });
                     })
                     .catch((error) => {
                         alert("Error-" + error.message);
