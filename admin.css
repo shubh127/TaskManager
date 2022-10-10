@@ -1,0 +1,29 @@
+.navbar{
+    border: 1px solid #ccc;
+    display: block;
+    padding: 1rem;
+}
+
+
+.right-top{
+    position: fixed;
+    right: 5px;
+    top: 10px;
+}
+
+.center{
+    position: absolute;
+    top: 10px;
+    left: 50%;
+}
+.center-1{
+    position: absolute;
+    top: 70px;
+    left: 49%;
+}
+
+.center-2{
+    position: fixed;
+    top: 120px;
+    left: 20%;
+}

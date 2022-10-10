@@ -15,6 +15,11 @@ body {
     backdrop-filter: blur(2px);
 
 }
+    .container {
+        display: flex;
+        justify-content: center; 
+        border: rgba(20, 20, 20, .8) solid;
+}
 
 .loading {
     position: fixed;
