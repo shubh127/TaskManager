@@ -1,28 +1,43 @@
-.navbar{
+.navbar {
     border: 1px solid #ccc;
     display: block;
     padding: 1rem;
 }
 
-
-.right-top{
+.right-top {
     position: fixed;
     right: 5px;
     top: 10px;
 }
 
-.center{
+.center {
     position: absolute;
     top: 10px;
     left: 50%;
 }
-.center-1{
+
+.center-1 {
     text-align: center;
     position: relative;
-    top: 70px;
+    top: 20px;
 }
 
-.center-2{
-    padding: 100px;
+.center-2 {
+    padding: 50px;
     position: relative;
+    display: table;
+}
+
+.center-2>.row {
+    display: table-row;
+}
+
+.center-2>.row>* {
+    display: table-cell;
+    padding: 5px;
+    white-space: nowrap;
+}
+
+.col {
+    width: 100%;
 }
