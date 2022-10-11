@@ -29,6 +29,7 @@
 <div class="center-2" id="listForYou">
 </div>
 </div>
+<div class="loading" id="loader" hidden>Loading&#8230;</div>
 
 <script type="module">
 
@@ -53,6 +54,7 @@
     let taskForYou = document.getElementById("taskForYou");
     let taskListForYou = document.getElementById("listForYou");
     const container = document.getElementById("container");
+    const loader = document.getElementById("loader");
 
     var currentUser = null;
 
@@ -77,6 +79,7 @@
     }
 
     function getTasksByYou() {
+        loader.hidden = false;
         var tasks = [{ taskName: "Task Name", description: "Task Description", startDate: "Start Date", endDate: "End Date", isCompleted: "Status", owner: "Assigned To", cost: "Cost/Hour" }];
         database.ref().child("tasks/").orderByChild("createdBy").equalTo(currentUser.email).once("value").then((snapshot) => {
             snapshot.forEach(function (childSnapshot) {
@@ -90,10 +93,12 @@
                 taskByYou.innerHTML = "You have not created any tasks yet!!!";
                 taskListByYou.hidden = true;
             }
+            loader.hidden = true;
         });
     }
 
     function getTasksForYou() {
+        loader.hidden = false;
         var tasks = [{ taskName: "Task Name", description: "Task Description", startDate: "Start Date", endDate: "End Date", isCompleted: "Status", owner: "Assigned To", cost: "Cost/Hour" }];
         database.ref().child("tasks/").orderByChild("owner").equalTo(currentUser.email).once("value").then((snapshot) => {
             snapshot.forEach(function (childSnapshot) {
@@ -108,6 +113,7 @@
                 taskForYou.innerHTML = "You have no assigned tasks at the moment!!!";
                 taskListForYou.hidden = true;
             }
+            loader.hidden = true;
         });
     }
 
