@@ -13,8 +13,8 @@ body {
     background-size: cover;
     /* border-color: aliceblue; */
     backdrop-filter: blur(2px);
-
 }
+
     .container {
         display: flex;
         justify-content: center; 
