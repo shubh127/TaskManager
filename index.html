@@ -86,7 +86,7 @@
                 tasks.push(childSnapshot.val());
             });
             if (tasks.length > 1) {
-                taskByYou.innerHTML = "You have created " + (tasks.length - 1) + " tasks";
+                taskByYou.innerHTML = "You have created " + (tasks.length - 1) + " task(s)";
                 taskListByYou.hidden = false;
                 inflateByYouTaskList(tasks);
             } else {
@@ -106,7 +106,7 @@
             });
             console.log(tasks);
             if (tasks.length > 1) {
-                taskForYou.innerHTML = "You have been assigned " + (tasks.length - 1) + " tasks";
+                taskForYou.innerHTML = "You have been assigned " + (tasks.length - 1) + " task(s)";
                 taskListForYou.hidden = false;
                 inflateForYouTaskList(tasks);
             } else {
