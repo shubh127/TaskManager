@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Add task</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="addtask.css">
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
+</head>
+
+<body style="--bs-body-color: #333;">
+    <div class="container shadow p-5 mb-5 bg-body rounded">
+        <h3>Add new task</h3>
+        <hr class="border-primary border-3 opacity-75">
+        <form name="formTask" onsubmit="return false">
+            <div class="mb-3">
+                <label for="formGroupExampleInput" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name">
+            </div>
+            <div class="mb-3">
+                <label for="exampleFormControlTextarea1" class="form-label">Description</label>
+                <textarea class="form-control" id="description" rows="3"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="formGroupExampleInput" class="form-label">Assign to</label>
+                <input type="text" class="form-control" id="owner">
+            </div>
+            <div class="mb-3">
+                <div class="col-lg-3 col-sm-6">
+                    <label for="startDate">Start Date</label>
+                    <input id="startDate" class="form-control" type="date" />
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="col-lg-3 col-sm-6">
+                    <label for="endDate">End Date</label>
+                    <input id="endDate" class="form-control" type="date" />
+                </div>
+            </div>
+            <div class="mb-3">
+                <div class="col-lg-3 col-sm-6">
+                    <label for="formGroupExampleInput" class="form-label">Cost per hours</label>
+                    <input type="number" class="form-control" id="costPerHour">
+                </div>
+            </div>
+            <div class="mb-3">
+                <button type="button" class="btn btn-primary btn-lg" id="btnCancel">Cancel</button>
+                <button type="submit" class="btn btn-primary btn-lg" id="btnAddNew">Create</button>
+            </div>
+        </form>
+        <div class="loading" id="loader" hidden>Loading&#8230;</div>
+    </div>
+
+    <script type="module">
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCinFXz6dEhbTXUnPz3peosGRBr_SB709I",
+            authDomain: "task-manager-8c255.firebaseapp.com",
+            databaseURL: "https://task-manager-8c255-default-rtdb.firebaseio.com",
+            projectId: "task-manager-8c255",
+            storageBucket: "task-manager-8c255.appspot.com",
+            messagingSenderId: "90700216322",
+            appId: "1:90700216322:web:a4b3087d4f546991ce4f1b"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        let btnCancel = document.getElementById("btnCancel");
+        let btnAddNew = document.getElementById("btnAddNew");
+        let inpName = document.getElementById("name");
+        let inpDesc = document.getElementById("description");
+        let inpOwner = document.getElementById("owner");
+        let inpStartDate = document.getElementById("startDate");
+        let inpEndDate = document.getElementById("endDate");
+        let inpCPH = document.getElementById("costPerHour");
+        let loader = document.getElementById("loader");
+
+        var currentUser = null;
+
+        inpStartDate.min = new Date().getFullYear() + '-' + ("0" + (new Date().getMonth() + 1)).slice(-2) + '-' + ("0" + new Date().getDate()).slice(-2);
+        inpEndDate.min = new Date().getFullYear() + '-' + ("0" + (new Date().getMonth() + 1)).slice(-2) + '-' + ("0" + new Date().getDate()).slice(-2);
+
+
+        let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+        function goBack() {
+            window.history.back();
+        }
+
+        function addNewTask() {
+            if (validateInputs()) {
+                loader.hidden = false;
+                var taskDetails = {
+                    createdBy: currentUser.email,
+                    taskName: inpName.value,
+                    description: inpDesc.value,
+                    owner: inpOwner.value,
+                    startDate: inpStartDate.value,
+                    endDate: inpEndDate.value,
+                    cost: inpCPH.value,
+                    isCompleted: false,
+                    isShow: true
+                };
+
+                var databaseRef = database.ref()
+                databaseRef.child('tasks/' + new Date()).set(taskDetails, (error) => {
+                    loader.hidden = true;
+                    if (error) {
+                        alert("Error-" + error.message);
+                    } else {
+                        alert("Task created successfully!!!");
+                        window.location = "index.html";
+                    }
+                });
+            }
+        }
+
+        function validateInputs() {
+            console.log(inpStartDate.value)
+            if (isEmptyOrSpaces(inpName.value)) {
+                alert("Please Enter a name!!!");
+                return false;
+            } else if (isEmptyOrSpaces(inpDesc.value)) {
+                alert("Please Enter a description!!!");
+                return false;
+            } else if (isEmptyOrSpaces(inpOwner.value)) {
+                alert("Please Enter an owner!!!");
+                return false;
+            } else if (!emailRegex.test(inpOwner.value)) {
+                alert("Enter a valid email (Example- demo@domain.com)")
+                return false;
+            } else if (isEmptyOrSpaces(inpStartDate.value)) {
+                alert("Please select a start date!!!");
+                return false;
+            } else if (isEmptyOrSpaces(inpEndDate.value)) {
+                alert("Please select a end date!!!");
+                return false;
+            } else if (isEmptyOrSpaces(inpCPH.value)) {
+                alert("Please enter appropriate cost!!!");
+                return false;
+            }
+            return true;
+        }
+
+        function isEmptyOrSpaces(str) {
+            return str === null || str.match(/^ *$/) !== null
+        }
+
+        function getUserDetails() {
+            let keepLoggedIn = localStorage.getItem("keepLoggedIn");
+            if (keepLoggedIn == "yes") {
+                currentUser = JSON.parse(localStorage.getItem("user"));
+            } else {
+                currentUser = JSON.parse(sessionStorage.getItem("user"));
+            }
+            return currentUser;
+        }
+
+        window.onload = function () {
+            getUserDetails();
+            if (currentUser == null) {
+                window.location = "login.html";
+            }
+        }
+
+        btnCancel.addEventListener("click", goBack);
+        btnAddNew.addEventListener("click", addNewTask);
+    </script>
+</body>
+
+</html>
