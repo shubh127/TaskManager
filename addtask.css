@@ -4,9 +4,9 @@ body {
 }
 
 .container {
-  top:20px;
-  position: fixed;
-  left:6.5%;
+  top: 20px;
+  position: relative;
+  overflow: scroll;
 }
 
 body {
