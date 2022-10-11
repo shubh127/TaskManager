@@ -104,7 +104,8 @@
                     endDate: inpEndDate.value,
                     cost: inpCPH.value,
                     isCompleted: false,
-                    isShow: true
+                    isShow: true,
+                    dateCreated: Date.now()
                 };
 
                 var databaseRef = database.ref()

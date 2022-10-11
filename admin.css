@@ -17,13 +17,12 @@
     left: 50%;
 }
 .center-1{
-    position: absolute;
+    text-align: center;
+    position: relative;
     top: 70px;
-    left: 49%;
 }
 
 .center-2{
-    position: fixed;
-    top: 120px;
-    left: 20%;
+    padding: 100px;
+    position: relative;
 }
