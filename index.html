@@ -23,32 +23,20 @@
 </div>
 
 <h4 class="center-1" id="taskHead"> Tasks by you </h4>
-<div class="center-2" id="list" hidden>
+<div class="center-2" id="list">
     <div class="container text-center">
         <div class="row row-cols-auto">
-            <div class="col border border-primary">Task Id</div>
+            <div class="col border border-primary">Serial Number</div>
             <div class="col border border-primary">Task Name</div>
             <div class="col border border-primary">Task Description</div>
             <div class="col border border-primary">Task startDate</div>
             <div class="col border border-primary">Task endDate</div>
             <div class="col border border-primary">Task status</div>
-            <div class="col border border-primary">
-
-            </div>
-        </div>
-        <div class="row row-cols-auto">
-            <div class="col border border-primary">1</div>
-            <div class="col border border-primary">new Task</div>
-            <div class="col border border-primary">Lorem ipsum dolor sit amet new task is the desc</div>
-            <div class="col border border-primary">10-10-2022</div>
-            <div class="col border border-primary">17-10-2022</div>
-            <div class="col border border-primary">Not assigned</div>
-            <div class="col border border-primary">
-                <button type="button" class="btn-primary"> Assign Task
-                </button>
-            </div>
+            <div class="col border border-primary">Assigned To</div>
+            <div class="col border border-primary">Cost per hour</div>
         </div>
     </div>
+</div>
 </div>
 
 <script type="module">
@@ -71,6 +59,7 @@
     let btnAddTask = document.getElementById("btnAddTask");
     let taskHead = document.getElementById("taskHead");
     let taskList = document.getElementById("list");
+    const container = document.getElementById("container");
 
     var currentUser = null;
 
@@ -100,6 +89,7 @@
             snapshot.forEach(function (childSnapshot) {
                 tasks.push(childSnapshot.val());
             });
+            console.log(tasks);
             if (tasks.length > 0) {
                 taskHead.innerHTML = "You have created " + tasks.length + " tasks";
                 taskList.hidden = false;
@@ -109,6 +99,14 @@
                 taskList.hidden = true;
             }
         });
+    }
+
+    function inflateTaskList(tasks) {
+        var completelist = document.getElementById("thelist");
+        for (var c = 0; c < tasks.length; c++) {
+            var isComplete = tasks[c].isCompleted === true ? "Completed" : "Not Completed"
+            taskList.innerHTML += "<div class=\"row row-cols-auto\"> <div class=\"col border border-primary\">" + (c + 1) + "</div>   <div class=\"col border border-primary\">" + tasks[c].taskName + "</div>  <div class=\"col border border-primary \">" + tasks[c].description + "</div>    <div class=\"col border border-primary\">" + tasks[c].startDate + "</div>  <div class=\"col border border-primary\">" + tasks[c].endDate + "</div>    <div class=\"col border border-primary\">" + isComplete + "</div>  <div class=\"col border border-primary\">" + tasks[c].owner + "</div> <div class=\"col border border-primary\">" + tasks[c].cost + "</div>";
+        };
     }
 
     window.onload = function () {
@@ -121,9 +119,6 @@
             btnSignOut.href = "javascript:signOut()";
             getTasksByYou()
         }
-    }
-
-    function getKeyValue(object) {
     }
 
     btnAddTask.addEventListener("click", goToAddTaskScreen);
