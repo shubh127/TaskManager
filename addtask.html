@@ -9,7 +9,6 @@
         integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="addtask.css">
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
 </head>
 
@@ -69,7 +68,6 @@
         };
 
         firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
         const database = firebase.database();
 
         let btnCancel = document.getElementById("btnCancel");
@@ -110,7 +108,7 @@
                 };
 
                 var databaseRef = database.ref()
-                databaseRef.child('tasks/' + new Date()).set(taskDetails, (error) => {
+                databaseRef.child('tasks/' + Date.now()).set(taskDetails, (error) => {
                     loader.hidden = true;
                     if (error) {
                         alert("Error-" + error.message);

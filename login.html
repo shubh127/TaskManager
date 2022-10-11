@@ -94,7 +94,6 @@
                         databaseRef.child('users/' + user.uid).get().then((snapshot) => {
                             login(snapshot);
                         });
-
                     })
                     .catch(function (error) {
                         alert("Error-" + error.message);
