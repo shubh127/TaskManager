@@ -125,9 +125,17 @@
             var isComplete = "Status";
             var number = "Serial Number";
             var style = "style=\"font-size:22px\"";
+
             if (c !== 0) {
                 number = c;
-                isComplete = tasks[c].isCompleted === true ? "Completed" : "Not Completed"
+                const endDate = new Date(tasks[c].endDate).getTime();
+                const today = new Date().getTime();
+                if (today > endDate) {
+                    isComplete = "Expired";
+                } else {
+                    isComplete = tasks[c].isCompleted === true ? ("Completed on " + tasks[c].completionDate) : "Not Completed"
+
+                }
                 style = "style=\"font-size:14px\"";
             }
 
@@ -143,7 +151,7 @@
             var button = "<div class=\"col border border-primary\">Update status</div>";
             if (c !== 0) {
                 number = c;
-                //check task expired 
+
                 const endDate = new Date(tasks[c].endDate).getTime();
                 const today = new Date().getTime();
 
@@ -158,10 +166,7 @@
                         button = "<div class=\"col border border-primary\">" + "<button class =\"btn btn-success\" id = \"btnDone\" onclick =\"completeTask(" + tasks[c].dateCreated + ")\"> Mark as done</button></div>";
                     }
                 }
-
-
                 style = "style=\"font-size:14px\"";
-
             }
             taskListForYou.innerHTML += "<div class=\"row row-cols-auto\" " + style + "> <div class=\"col border border-primary\">" + number + "</div>   <div class=\"col border border-primary\">" + tasks[c].taskName + "</div>  <div class=\"col border border-primary \">" + tasks[c].description + "</div>    <div class=\"col border border-primary\">" + tasks[c].startDate + "</div>  <div class=\"col border border-primary\">" + tasks[c].endDate + "</div>    <div class=\"col border border-primary\">" + isComplete + "</div>  <div class=\"col border border-primary\">" + tasks[c].createdBy + "</div> <div class=\"col border border-primary\">" + tasks[c].cost + "</div>" + button;
         };
