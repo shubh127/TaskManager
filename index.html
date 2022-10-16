@@ -58,6 +58,10 @@
 
     var currentUser = null;
 
+    function myFunction() {
+        document.getElementById("demo").innerHTML = "Hello World";
+    }
+
     function goToAddTaskScreen() {
         window.location = "addtask.html";
     }
@@ -99,12 +103,11 @@
 
     function getTasksForYou() {
         loader.hidden = false;
-        var tasks = [{ taskName: "Task Name", description: "Task Description", startDate: "Start Date", endDate: "End Date", isCompleted: "Status", owner: "Assigned To", cost: "Cost/Hour" }];
+        var tasks = [{ taskName: "Task Name", description: "Task Description", startDate: "Start Date", endDate: "End Date", isCompleted: "Status", createdBy: "Assigned By", cost: "Cost/Hour" }];
         database.ref().child("tasks/").orderByChild("owner").equalTo(currentUser.email).once("value").then((snapshot) => {
             snapshot.forEach(function (childSnapshot) {
                 tasks.push(childSnapshot.val());
             });
-            console.log(tasks);
             if (tasks.length > 1) {
                 taskForYou.innerHTML = "You have been assigned " + (tasks.length - 1) + " task(s)";
                 taskListForYou.hidden = false;
@@ -137,13 +140,44 @@
             var isComplete = "Status";
             var number = "Serial Number";
             var style = "style=\"font-size:22px\"";
+            var button = "<div class=\"col border border-primary\">Update status</div>";
             if (c !== 0) {
                 number = c;
-                isComplete = tasks[c].isCompleted === true ? "Completed" : "Not Completed"
+                //check task expired 
+                const endDate = new Date(tasks[c].endDate).getTime();
+                const today = new Date().getTime();
+
+                if (today > endDate) {
+                    isComplete = "Expired";
+                    button = "<div class=\"col border border-primary\"></div>";
+                } else {
+                    isComplete = tasks[c].isCompleted === true ? ("Completed on " + tasks[c].completionDate) : "Not Completed"
+                    if (tasks[c].isCompleted) {
+                        button = "<div class=\"col border border-primary\"></div>";
+                    } else {
+                        button = "<div class=\"col border border-primary\">" + "<button class =\"btn btn-success\" id = \"btnDone\" onclick =\"completeTask(" + tasks[c].dateCreated + ")\"> Mark as done</button></div>";
+                    }
+                }
+
+
                 style = "style=\"font-size:14px\"";
+
             }
-            taskListForYou.innerHTML += "<div class=\"row row-cols-auto\" " + style + "> <div class=\"col border border-primary\">" + number + "</div>   <div class=\"col border border-primary\">" + tasks[c].taskName + "</div>  <div class=\"col border border-primary \">" + tasks[c].description + "</div>    <div class=\"col border border-primary\">" + tasks[c].startDate + "</div>  <div class=\"col border border-primary\">" + tasks[c].endDate + "</div>    <div class=\"col border border-primary\">" + isComplete + "</div>  <div class=\"col border border-primary\">" + tasks[c].owner + "</div> <div class=\"col border border-primary\">" + tasks[c].cost + "</div>";
+            taskListForYou.innerHTML += "<div class=\"row row-cols-auto\" " + style + "> <div class=\"col border border-primary\">" + number + "</div>   <div class=\"col border border-primary\">" + tasks[c].taskName + "</div>  <div class=\"col border border-primary \">" + tasks[c].description + "</div>    <div class=\"col border border-primary\">" + tasks[c].startDate + "</div>  <div class=\"col border border-primary\">" + tasks[c].endDate + "</div>    <div class=\"col border border-primary\">" + isComplete + "</div>  <div class=\"col border border-primary\">" + tasks[c].createdBy + "</div> <div class=\"col border border-primary\">" + tasks[c].cost + "</div>" + button;
         };
+    }
+
+    function completeTask(id) {
+        loader.hidden = false;
+        database.ref().child('tasks/' + id).update({ isCompleted: true, completionDate: (new Date().toJSON().slice(0, 10)) }, (error) => {
+            loader.hidden = true;
+            if (error) {
+                alert("Error-" + error.message);
+            } else {
+                alert("Task marked completed successfully");
+                window.location = "index.html";
+            }
+        });
     }
 
     window.onload = function () {
@@ -160,14 +194,16 @@
                 taskByYou.hidden = true;
                 getTasksForYou();
             } else {
+                taskListForYou.hidden = true;
+                taskForYou.hidden = true;
                 getTasksByYou();
-                getTasksForYou();
             }
         }
     }
 
     btnAddTask.addEventListener("click", goToAddTaskScreen);
     btnSignOut.addEventListener("click", signOut);
+    window.completeTask = completeTask
 </script>
 </body>
 
